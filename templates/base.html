@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniWatch — Telemetría Centralizada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">◈</span>
+            <span class="brand-name">OmniWatch</span>
+            <span class="brand-sub">Telemetría Centralizada</span>
+        </div>
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="/api/summary" target="_blank">API</a>
+            <a href="/health" target="_blank">Salud</a>
+        </nav>
+    </header>
+    <main class="container">
+        {% if error %}
+            <div class="error-box">{{ error }}</div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <span>OmniWatch © 2026 — Detección Temprana y Alertas Multi-Sede</span>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

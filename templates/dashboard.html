@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Panel Centralizado</h1>
+    <div class="meta">
+        {% if demo_mode %}<span class="badge badge-demo">DEMO EN VIVO</span>{% endif %}
+        <span class="timestamp">Actualizado: {{ generated_at }}</span>
+    </div>
+</div>
+
+<section class="kpi-grid">
+    <div class="kpi">
+        <span class="kpi-label">Servidores</span>
+        <span class="kpi-value">{{ total_servers }}</span>
+    </div>
+    <div class="kpi kpi-ok">
+        <span class="kpi-label">Saludables</span>
+        <span class="kpi-value">{{ healthy_count }}</span>
+    </div>
+    <div class="kpi kpi-critical">
+        <span class="kpi-label">Alertas Críticas</span>
+        <span class="kpi-value">{{ alert_counts.critical }}</span>
+    </div>
+    <div class="kpi kpi-warning">
+        <span class="kpi-label">Advertencias</span>
+        <span class="kpi-value">{{ alert_counts.warning }}</span>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Servidores Monitoreados</h2>
+    <div class="server-grid">
+        {% for item in servers %}
+        <a class="server-card health-{{ item.health }}" href="{{ url_for('server_detail', server_id=item.server.id) }}">
+            <div class="server-top">
+                <span class="server-name">{{ item.server.name }}</span>
+                <span class="server-health">{{ item.health }}</span>
+            </div>
+            <div class="server-loc">{{ item.server.location }}</div>
+            {% if item.metrics %}
+            <div class="bar-group">
+                <div class="bar-row">
+                    <span class="bar-label">CPU</span>
+                    <div class="bar"><div class="bar-fill" data-value="{{ item.metrics.cpu }}"></div></div>
+                    <span class="bar-val">{{ item.metrics.cpu }}%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">RAM</span>
+                    <div class="bar"><div class="bar-fill" data-value="{{ item.metrics.ram }}"></div></div>
+                    <span class="bar-val">{{ item.metrics.ram }}%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">DISK</span>
+                    <div class="bar"><div class="bar-fill" data-value="{{ item.metrics.disk }}"></div></div>
+                    <span class="bar-val">{{ item.metrics.disk }}%</span>
+                </div>
+            </div>
+            <div class="server-bottom">
+                <span>↓ {{ item.metrics.net_in }} MB</span>
+                <span>↑ {{ item.metrics.net_out }} MB</span>
+                <span>Servicios: {{ item.service_count }}</span>
+            </div>
+            {% else %}
+            <div class="no-data">Sin datos</div>
+            {% endif %}
+            {% if item.down_services %}
+            <div class="down-list">Caídos: {{ item.down_services | join(', ') }}</div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Alertas Recientes</h2>
+    <div class="table-wrap">
+    <table class="alert-table">
+        <thead>
+            <tr>
+                <th>Severidad</th>
+                <th>Servidor</th>
+                <th>Sede</th>
+                <th>Mensaje</th>
+                <th>Fecha (UTC)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alerts %}
+            <tr class="sev-{{ a.severity }}">
+                <td><span class="sev-dot"></span>{{ a.severity }}</td>
+                <td>{{ a.server_name }}</td>
+                <td>{{ a.server_location }}</td>
+                <td>{{ a.message }}</td>
+                <td>{{ a.timestamp[:19] }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty">Sin alertas registradas</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="detail-header">
+    <h1>{{ server.name }}</h1>
+    <div class="detail-meta">
+        <span>{{ server.location }}</span>
+        <span>{{ server.host }}</span>
+        <a href="{{ url_for('dashboard') }}">← Volver al panel</a>
+    </div>
+</div>
+
+{% if metrics %}
+<section class="kpi-grid">
+    <div class="kpi"><span class="kpi-label">CPU</span><span class="kpi-value">{{ metrics.cpu }}%</span></div>
+    <div class="kpi"><span class="kpi-label">RAM</span><span class="kpi-value">{{ metrics.ram }}%</span></div>
+    <div class="kpi"><span class="kpi-label">Disco</span><span class="kpi-value">{{ metrics.disk }}%</span></div>
+    <div class="kpi"><span class="kpi-label">Uptime</span><span class="kpi-value">{{ (metrics.uptime // 3600) }}h</span></div>
+</section>
+{% endif %}
+
+<section class="panel">
+    <h2>Histórico de CPU / RAM / Disco</h2>
+    <canvas id="historyChart" height="220"></canvas>
+</section>
+
+<section class="panel">
+    <h2>Servicios</h2>
+    <div class="service-grid">
+        {% for svc in services %}
+        <div class="service-card status-{{ svc.status }}">
+            <span class="service-name">{{ svc.name }}</span>
+            <span class="service-status">{{ svc.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Alertas del Servidor</h2>
+    <div class="table-wrap">
+    <table class="alert-table">
+        <thead>
+            <tr><th>Severidad</th><th>Mensaje</th><th>Fecha (UTC)</th></tr>
+        </thead>
+        <tbody>
+            {% for a in alerts %}
+            <tr class="sev-{{ a.severity }}">
+                <td><span class="sev-dot"></span>{{ a.severity }}</td>
+                <td>{{ a.message }}</td>
+                <td>{{ a.timestamp[:19] }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="empty">Sin alertas</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="history-data" type="application/json">{{ history | tojson | safe }}</script>
+<script>
+const historyData = JSON.parse(document.getElementById('history-data').textContent);
+const labels = historyData.map(h => h.timestamp.slice(11, 19));
+const cpu = historyData.map(h => h.cpu);
+const ram = historyData.map(h => h.ram);
+const disk = historyData.map(h => h.disk);
+
+const canvas = document.getElementById('historyChart');
+const ctx = canvas.getContext('2d');
+
+function drawChart() {
+    const w = canvas.width = canvas.offsetWidth;
+    const h = canvas.height = 220;
+    const pad = 30;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = '#1f2a3a';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = pad + (h - 2 * pad) * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(w - pad, y);
+        ctx.stroke();
+    }
+
+    function plot(data, color) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        data.forEach((v, i) => {
+            const x = pad + (w - 2 * pad) * (i / Math.max(1, data.length - 1));
+            const y = pad + (h - 2 * pad) * (1 - v / 100);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    }
+
+    plot(cpu, '#3b82f6');
+    plot(ram, '#f59e0b');
+    plot(disk, '#ef4444');
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('100%', pad, pad - 8);
+    ctx.fillText('0%', pad, h - pad + 16);
+}
+
+drawChart();
+window.addEventListener('resize', drawChart);
+</script>
+{% endblock %}
