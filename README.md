@@ -87,6 +87,6 @@ From edge host monitoring to centralized operational dispatch, *OmniWatch* inclu
    git clone [https://github.com/yurialexanderpagelkruger/omniwatch-telemetry-hub.git](https://github.com/yurialexanderpagelkruger/omniwatch-telemetry-hub.git)
    cd omniwatch-telemetry-hub
 
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
-Desarrollado por **Yuri Alexander Pagel Krüger**
+Developed by **Yuri Alexander Pagel Krüger**
