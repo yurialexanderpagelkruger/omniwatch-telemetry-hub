@@ -5,52 +5,52 @@
     <div class="detail-meta">
         <span>{{ server.location }}</span>
         <span>{{ server.host }}</span>
-        <a href="{{ url_for('dashboard') }}">← Volver al panel</a>
+        <a href="{{ url_for('dashboard') }}">{{ t('back') }}</a>
     </div>
 </div>
 
 {% if metrics %}
 <section class="kpi-grid">
-    <div class="kpi"><span class="kpi-label">CPU</span><span class="kpi-value">{{ metrics.cpu }}%</span></div>
-    <div class="kpi"><span class="kpi-label">RAM</span><span class="kpi-value">{{ metrics.ram }}%</span></div>
-    <div class="kpi"><span class="kpi-label">Disco</span><span class="kpi-value">{{ metrics.disk }}%</span></div>
-    <div class="kpi"><span class="kpi-label">Uptime</span><span class="kpi-value">{{ (metrics.uptime // 3600) }}h</span></div>
+    <div class="kpi"><span class="kpi-label">{{ t('cpu') }}</span><span class="kpi-value">{{ metrics.cpu }}%</span></div>
+    <div class="kpi"><span class="kpi-label">{{ t('ram') }}</span><span class="kpi-value">{{ metrics.ram }}%</span></div>
+    <div class="kpi"><span class="kpi-label">{{ t('disco') }}</span><span class="kpi-value">{{ metrics.disk }}%</span></div>
+    <div class="kpi"><span class="kpi-label">{{ t('uptime') }}</span><span class="kpi-value">{{ (metrics.uptime // 3600) }}h</span></div>
 </section>
 {% endif %}
 
 <section class="panel">
-    <h2>Histórico de CPU / RAM / Disco</h2>
+    <h2>{{ t('history_title') }}</h2>
     <canvas id="historyChart" height="220"></canvas>
 </section>
 
 <section class="panel">
-    <h2>Servicios</h2>
+    <h2>{{ t('services') }}</h2>
     <div class="service-grid">
         {% for svc in services %}
         <div class="service-card status-{{ svc.status }}">
             <span class="service-name">{{ svc.name }}</span>
-            <span class="service-status">{{ svc.status }}</span>
+            <span class="service-status">{{ t(svc.status) }}</span>
         </div>
         {% endfor %}
     </div>
 </section>
 
 <section class="panel">
-    <h2>Alertas del Servidor</h2>
+    <h2>{{ t('server_alerts') }}</h2>
     <div class="table-wrap">
     <table class="alert-table">
         <thead>
-            <tr><th>Severidad</th><th>Mensaje</th><th>Fecha (UTC)</th></tr>
+            <tr><th>{{ t('severity') }}</th><th>{{ t('message') }}</th><th>{{ t('date_utc') }}</th></tr>
         </thead>
         <tbody>
             {% for a in alerts %}
             <tr class="sev-{{ a.severity }}">
-                <td><span class="sev-dot"></span>{{ a.severity }}</td>
+                <td><span class="sev-dot"></span>{{ t(a.severity) }}</td>
                 <td>{{ a.message }}</td>
                 <td>{{ a.timestamp[:19] }}</td>
             </tr>
             {% else %}
-            <tr><td colspan="3" class="empty">Sin alertas</td></tr>
+            <tr><td colspan="3" class="empty">{{ t('no_alerts_server') }}</td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -69,13 +69,17 @@ const disk = historyData.map(h => h.disk);
 const canvas = document.getElementById('historyChart');
 const ctx = canvas.getContext('2d');
 
+function isLight() {
+    return document.documentElement.getAttribute("data-theme") === "light";
+}
+
 function drawChart() {
     const w = canvas.width = canvas.offsetWidth;
     const h = canvas.height = 220;
     const pad = 30;
     ctx.clearRect(0, 0, w, h);
 
-    ctx.strokeStyle = '#1f2a3a';
+    ctx.strokeStyle = isLight() ? '#e2e8f0' : '#1f2a3a';
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
         const y = pad + (h - 2 * pad) * i / 4;
@@ -101,7 +105,7 @@ function drawChart() {
     plot(ram, '#f59e0b');
     plot(disk, '#ef4444');
 
-    ctx.fillStyle = '#94a3b8';
+    ctx.fillStyle = isLight() ? '#5b6b7f' : '#94a3b8';
     ctx.font = '12px sans-serif';
     ctx.fillText('100%', pad, pad - 8);
     ctx.fillText('0%', pad, h - pad + 16);
@@ -109,5 +113,6 @@ function drawChart() {
 
 drawChart();
 window.addEventListener('resize', drawChart);
+window.addEventListener('omniwatch-theme-change', drawChart);
 </script>
 {% endblock %}

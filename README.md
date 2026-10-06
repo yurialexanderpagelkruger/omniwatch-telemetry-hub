@@ -1,75 +1,88 @@
 # OmniWatch
 
-**OmniWatch** es una plataforma centralizada de telemetría, monitoreo proactivo y alertas multisede diseñada para empresas con sucursales distribuidas o infraestructura multi-servidor. Diseñado específicamente para consultores TI, administradores de sistemas y directores de operaciones en PyMEs, *OmniWatch* elimina el modelo de soporte reactivo y provee visibilidad total en tiempo real sobre recursos de cómputo, conectividad y disponibilidad de servicios.
+**OmniWatch** is a centralized telemetry, proactive monitoring, and multi-site alerting platform engineered for organizations with distributed branch offices or multi-server infrastructure. Specifically designed for IT consultants, system administrators, and operations leads in SMBs, *OmniWatch* replaces the reactive break-fix model with comprehensive real-time visibility across computing resources, network connectivity, and service availability.
 
-Con agentes de recolección ligeros para hosts remotos, un panel de control interactivo para seguimiento visual inmediato y un motor de notificación multicanal (Telegram y Correo Electrónico), el proyecto detecta cuellos de botella e incidentes antes de que impacten en la facturación o atención al cliente, ofreciendo además un modo demo interactivo para demostraciones directas a clientes.
+Featuring lightweight collection agents for remote hosts, an interactive dashboard for immediate visual tracking, and a multi-channel notification engine (Telegram and Email), the platform identifies bottlenecks and incidents before they disrupt operations or customer service, while also including an interactive demo mode for live client presentations.
 
-### 📸 Capturas de pantalla
+---
+
+### 📸 Screenshots
 
 <div align="center">
   <table border="0">
     <thead>
       <tr>
-        <th align="center">Versión de PC</th>
-        <th align="center">Versión Móvil</th>
+        <th align="center">Desktop Version</th>
+        <th align="center">Mobile Version</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td align="center" valign="middle">
-          <img src="screenshot.gif" alt="Versión de PC" width="589" />
+          <img src="screenshot.gif" alt="Desktop Version" width="589" />
         </td>
         <td align="center" valign="middle">
-          <img src="screenshot2.gif" alt="Versión Móvil" width="186" />
+          <img src="screenshot2.gif" alt="Mobile Version" width="186" />
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
-## ✨ Características Principales
+---
 
-* **Topología Multisede Unificada:** Agrupamiento de sucursales geográficamente dispersas con visualización de estado en vivo (En línea, Advertencia, Crítico).
+## ✨ Key Features
 
-* **Agente Colector Ultra-Ligero:** Script en Bash sin dependencias pesadas que extrae consumo de CPU, memoria, saturación de disco, latencia de red e integridad de servicios críticos (`systemd`), reportando vía API REST segura.
+* **Unified Multi-Site Topology:** Centralized grouping of geographically distributed branches with live health-status visualization (Online, Warning, Critical).
 
-* **Alertas Automatizadas Inmediatas:** Despacho proactivo de notificaciones a grupos de Telegram o casillas de correo ante eventos como caída de servicios, desconexión de sedes o particiones al límite.
+* **Multi-Language Support (i18n):** Fully localized web interface offering support for 3 languages: English, Spanish, and Portuguese, ensuring seamless operation for multilingual teams.
 
-* **Modo Demo con Simulación Dinámica:** Capacidad de alternar entre métricas reales en producción y telemetría sintética en tiempo real para demostraciones públicas en portafolios web sin exponer nodos productivos.
+* **Adaptive Theming (Dark & Light Mode):** Dynamic UI theme switching between Dark and Light mode, optimized for prolonged monitoring sessions in Network Operations Centers (NOC) and high-ambient light environments.
 
-* **Métricas Clave de Rendimiento:** Registro y representación de uso de memoria RAM, saturación de almacenamiento raíz, carga promedio de CPU e inspección de estado de servicios base (Web, Bases de Datos, ERPs).
+* **Ultra-Lightweight Collector Agent:** Dependency-free Bash script extracting CPU load, memory utilization, disk saturation, network latency, and critical service integrity (`systemd`), reporting back through a secure REST API.
 
-* **Panel Web Responsive en Tiempo Real:** Interfaz construida en Python/Flask y JavaScript Vanilla con actualización asíncrona periódica sin recargar la página.
+* **Automated Real-Time Alerts:** Proactive delivery of critical incident alerts to Telegram groups or email inboxes triggered by service outages, node disconnections, or resource exhaustion.
 
-## ⚙️ ¿Qué Hace? (Módulos Disponibles)
+* **Demo Mode with Dynamic Simulation:** Seamless toggle between live production telemetry and synthetic real-time metrics for portfolio showcases and client walkthroughs without exposing production nodes.
 
-Desde el monitoreo local de cada nodo hasta la centralización operativa, *OmniWatch* implementa los siguientes componentes:
+* **Core Performance Metrics:** Real-time logging and visual representation of RAM usage, root partition storage saturation, average CPU load, and essential service inspection (Web servers, Databases, ERPs).
 
-1. **Servidor Central & API Hub (`app.py`):** Expone endpoints protegidos con token para ingesta de telemetría (`/api/report`), procesa umbrales de alerta y distribuye datos al panel administrativo.
+* **Responsive Real-Time Web Dashboard:** Frontend built with Python/Flask and Vanilla JavaScript featuring periodic asynchronous updates without full-page reloads.
 
-2. **Agente de Recolección de Servidor (`agent/collector_agent.sh`):** Ejecuta tareas programadas en cada sede, consulta métricas del sistema operativo y transmite la información al Hub central.
+---
 
-3. **Panel Visual de Monitoreo (`templates/index.html`, `dashboard.js`):** Interfaz web responsive que refresca indicadores automáticamente cada 5 segundos mediante consumo de API asíncrono.
+## ⚙️ What It Does (Available Modules)
 
-4. **Motor de Alertas:** Verifica umbrales críticos (>90% disco, >90% RAM o caída de nodos) y despacha mensajes formateados a canales de guardia técnica.
+From edge host monitoring to centralized operational dispatch, *OmniWatch* includes the following core components:
 
-5. **Simulador de Telemetría:** Genera oscilaciones realistas de tráfico y recursos para despliegues de demostración en vivo.
+1. **Central Server & API Hub (`app.py`):** Exposes token-authenticated endpoints for telemetry ingestion (`/api/report`), evaluates alert thresholds, and delivers consolidated data to the web dashboard.
 
-## 🛠️ Tecnologías Utilizadas
+2. **Server Collection Agent (`agent/collector_agent.sh`):** Executes scheduled tasks across host sites, queries operating system performance metrics, and reliably dispatches payload data to the central Hub.
+
+3. **Internationalization & Theming Layer:** Client-side localization and styling controller managing 3 language dictionaries (English, Spanish, Portuguese) alongside smooth Dark/Light mode theme state persistence.
+
+4. **Visual Monitoring Dashboard (`templates/index.html`, `dashboard.js`):** Responsive web interface that automatically refreshes operational indicators every 5 seconds through asynchronous REST API calls.
+
+5. **Alert Notification Engine:** Continuously tracks critical thresholds (>90% disk usage, >90% RAM utilization, or node dropouts) and routes formatted alerts to technical on-call channels.
+
+6. **Telemetry Simulator:** Synthesizes realistic traffic variance and system load oscillations for live demonstrations and testing environments.
+
+---
+
+## 🛠️ Tech Stack
 
 * **Backend:** Python 3.10+ / Flask.
+* **Frontend:** Semantic HTML5, Vanilla CSS3 (custom CSS variables supporting Dark and Light modes), and asynchronous JavaScript (Fetch API).
+* **Internationalization:** Client-side i18n dictionary mapping (English, Spanish, Portuguese).
+* **Collection Agents:** POSIX-compliant Bash, GNU Coreutils, `curl`, `awk`.
+* **Third-Party Integraciones:** Telegram Bot API, SMTP/Email.
+* **Security & Networking:** Bearer token authentication on REST APIs with production support for VPN and HTTPS deployment.
 
-* **Frontend:** HTML5 semántico, CSS3 Vanilla con diseño industrial/dark mode y JavaScript asíncrono (Fetch API).
+---
 
-* **Agentes de Recolección:** Bash nativo (POSIX), GNU Coreutils, `curl`, `awk`.
+## 🚀 Installation and Usage
 
-* **Integraciones:** Bot API de Telegram, SMTP/Email.
-
-* **Seguridad y Redes:** Autenticación por token Bearer en API REST y soporte de despliegue sobre VPN / HTTPS.
-
-## 🚀 Instalación y Uso
-
-1. Clonar el repositorio en el servidor central:
+1. Clone the repository on the central monitoring server:
    ```bash
    git clone [https://github.com/yurialexanderpagelkruger/omniwatch-telemetry-hub.git](https://github.com/yurialexanderpagelkruger/omniwatch-telemetry-hub.git)
    cd omniwatch-telemetry-hub

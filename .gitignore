@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+data/*.db
+*.db
+omniwatch.db
+venv/
+.venv/
+env/
+.idea/
+.vscode/
+.DS_Store

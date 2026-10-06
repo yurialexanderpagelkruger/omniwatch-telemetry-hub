@@ -1,0 +1,102 @@
+:root.light {
+    --bg: #f4f6fa;
+    --panel: #ffffff;
+    --panel-alt: #f8fafc;
+    --border: #d8e0ea;
+    --text: #0f1720;
+    --text-muted: #5b6b7f;
+    --text-dim: #8a98a8;
+    --topbar: #ffffff;
+    --footer: #f8fafc;
+}
+
+:root.light body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+:root.light .topbar {
+    background: var(--topbar);
+    border-bottom-color: var(--border);
+}
+
+:root.light .footer {
+    background: var(--footer);
+    border-top-color: var(--border);
+    color: var(--text-dim);
+}
+
+:root.light .brand-name { color: var(--text); }
+:root.light .brand-sub { color: var(--text-dim); }
+:root.light .nav a { color: var(--text-muted); }
+:root.light .nav a:hover { color: #2563eb; }
+
+:root.light .panel,
+:root.light .kpi {
+    background: var(--panel);
+    border-color: var(--border);
+}
+
+:root.light .panel h2 { color: var(--text); }
+:root.light .dashboard-header h1,
+:root.light .detail-header h1 { color: var(--text); }
+:root.light .timestamp { color: var(--text-dim); }
+
+:root.light .server-card {
+    background: var(--panel-alt);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+:root.light .server-card:hover { border-color: #2563eb; }
+:root.light .server-loc { color: var(--text-dim); }
+:root.light .bar-label { color: var(--text-dim); }
+:root.light .bar-val { color: var(--text-muted); }
+:root.light .bar { background: #e2e8f0; }
+:root.light .server-bottom {
+    border-top-color: var(--border);
+    color: var(--text-dim);
+}
+:root.light .no-data { color: var(--text-dim); }
+
+:root.light .alert-table th {
+    color: var(--text-dim);
+    border-bottom-color: var(--border);
+}
+:root.light .alert-table td {
+    border-bottom-color: #eef2f7;
+    color: var(--text);
+}
+:root.light .empty { color: var(--text-dim); }
+
+:root.light .service-card {
+    background: var(--panel-alt);
+    border-color: var(--border);
+}
+:root.light .service-name { color: var(--text); }
+
+:root.light #historyChart {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+}
+
+:root.light .detail-meta { color: var(--text-muted); }
+
+:root.light .badge-demo {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+}
+
+:root.light .kpi-label { color: var(--text-dim); }
+
+:root.light .error-box {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+:root.light .down-list {
+    background: #fee2e2;
+    color: #b91c1c;
+}

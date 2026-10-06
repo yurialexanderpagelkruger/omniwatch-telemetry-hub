@@ -1,18 +1,45 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, jsonify, abort
+from flask import Flask, render_template, jsonify, abort, request, make_response
 from apscheduler.schedulers.background import BackgroundScheduler
 from config import Config
 import database
 import simulator
 import collector
 import alerter
+from translations import get_text, detect_language
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 database.init_db()
 database.seed_servers()
+
+
+def current_language():
+    forced = request.args.get("lang")
+    if forced in ("en", "es", "pt"):
+        return forced
+    cookie = request.cookies.get("lang")
+    if cookie in ("en", "es", "pt"):
+        return cookie
+    country = None
+    try:
+        country = request.headers.get("CF-IPCountry") or request.headers.get("X-Country-Code")
+    except Exception:
+        country = None
+    return detect_language(request.headers.get("Accept-Language"), country)
+
+
+@app.context_processor
+def inject_i18n():
+    lang = current_language()
+
+    def t(key):
+        return get_text(lang, key)
+
+    return {"lang": lang, "t": t}
+
 
 def collection_job():
     if Config.DEMO_MODE:
@@ -21,14 +48,25 @@ def collection_job():
         collector.run_collection_cycle()
     alerter.run_alert_cycle()
 
+
 def maintenance_job():
     database.prune_old_data(days=7)
+
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(collection_job, "interval", seconds=Config.COLLECT_INTERVAL_SECONDS, id="collection")
 scheduler.add_job(maintenance_job, "interval", hours=6, id="maintenance")
 if not scheduler.running:
     scheduler.start()
+
+
+@app.after_request
+def persist_lang_cookie(response):
+    forced = request.args.get("lang")
+    if forced in ("en", "es", "pt"):
+        response.set_cookie("lang", forced, max_age=31536000)
+    return response
+
 
 @app.route("/")
 def dashboard():
@@ -67,6 +105,7 @@ def dashboard():
         generated_at=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
     )
 
+
 @app.route("/server/<int:server_id>")
 def server_detail(server_id):
     server = database.get_server(server_id)
@@ -85,9 +124,11 @@ def server_detail(server_id):
         alerts=alerts,
     )
 
+
 @app.errorhandler(404)
 def not_found(e):
-    return render_template("base.html", error="Recurso no encontrado"), 404
+    return render_template("base.html", error="Resource not found"), 404
+
 
 @app.route("/api/servers")
 def api_servers():
@@ -97,13 +138,16 @@ def api_servers():
         result.append({"server": s, "metrics": metrics})
     return jsonify(result)
 
+
 @app.route("/api/server/<int:server_id>/history")
 def api_history(server_id):
     return jsonify(database.get_metrics_history(server_id, limit=60))
 
+
 @app.route("/api/alerts")
 def api_alerts():
     return jsonify(database.get_recent_alerts(50))
+
 
 @app.route("/api/summary")
 def api_summary():
@@ -113,9 +157,11 @@ def api_summary():
         "generated_at": datetime.utcnow().isoformat(),
     })
 
+
 @app.route("/health")
 def health():
     return jsonify({"status": "ok", "service": "omniwatch"})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
